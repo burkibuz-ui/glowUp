@@ -3,27 +3,38 @@ session_start();
 require_once 'db.php';
 include 'header.php';
 
-// Siparişi kaydetme işlemi
+// Form gönderildiyse
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+
+    // Sepet boşsa geri gönder
+    if (empty($_SESSION['cart'])) {
+        header("Location: cart.php");
+        exit;
+    }
+
     $name = trim($_POST['name']);
     $phone = trim($_POST['phone']);
     $address = trim($_POST['address']);
+
+    // Toplam hesapla
     $total = 0;
-
-    if (!empty($_SESSION['cart'])) {
-        foreach ($_SESSION['cart'] as $item) {
-            $total += $item['price'] * $item['quantity'];
-        }
-
-        $stmt = $pdo->prepare("INSERT INTO orders (user_id, total_price, name, phone, address) VALUES (NULL, ?, ?, ?, ?)");
-        $stmt->execute([$total, $name, $phone, $address]);
-
-        $_SESSION['cart'] = []; // Sepeti sıfırla
-        header("Location: success.php");
-        exit;
-    } else {
-        $message = "Sepetiniz boş, sipariş verilemez.";
+    foreach ($_SESSION['cart'] as $item) {
+        $total += $item['price'] * $item['quantity'];
     }
+
+    // Siparişi kaydet
+    $stmt = $pdo->prepare("
+        INSERT INTO orders (name, phone, address, total_price, status, created_at)
+        VALUES (?, ?, ?, ?, 'hazırlanıyor', NOW())
+    ");
+    $stmt->execute([$name, $phone, $address, $total]);
+
+    // Sepeti temizle
+    unset($_SESSION['cart']);
+
+    // Success sayfasına git
+    header("Location: success.php");
+    exit;
 }
 ?>
 
@@ -31,19 +42,15 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     <div class="checkout-container">
         <h2>💳 Ödeme Sayfası</h2>
 
-        <?php if(isset($message)): ?>
-            <p class="message"><?= htmlspecialchars($message) ?></p>
-        <?php endif; ?>
-
         <form method="POST" class="checkout-form">
             <label>Ad Soyad</label>
-            <input type="text" name="name" placeholder="Adınızı ve soyadınızı girin" required>
+            <input type="text" name="name" required>
 
             <label>Telefon</label>
-            <input type="text" name="phone" placeholder="05XX XXX XX XX" required>
+            <input type="text" name="phone" required>
 
             <label>Adres</label>
-            <textarea name="address" rows="4" placeholder="Teslimat adresinizi girin" required></textarea>
+            <textarea name="address" rows="4" required></textarea>
 
             <button type="submit">Siparişi Tamamla</button>
         </form>
@@ -51,6 +58,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 </main>
 
 <?php include 'footer.php'; ?>
+
 
 <style>
 .page-content {

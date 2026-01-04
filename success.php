@@ -4,7 +4,7 @@
 <html lang="tr">
 <head>
   <meta charset="UTF-8">
-  <title>Sipariş Başarılı | GlowUp</title>
+  <title>Sipariş Alındı | GlowUp</title>
   <link rel="stylesheet" href="style.css">
   <style>
     body {
@@ -20,12 +20,11 @@
       padding: 40px 30px;
       text-align: center;
       box-shadow: 0 6px 15px rgba(0,0,0,0.1);
-      animation: fadeIn 0.6s ease;
     }
 
-    @keyframes fadeIn {
-      from {opacity: 0; transform: translateY(20px);}
-      to {opacity: 1; transform: translateY(0);}
+    .emoji {
+      font-size: 50px;
+      margin-bottom: 15px;
     }
 
     .success-container h2 {
@@ -48,28 +47,25 @@
       border-radius: 8px;
       text-decoration: none;
       font-weight: 600;
-      transition: all 0.3s ease;
+      transition: 0.3s;
     }
 
     .btn-continue:hover {
       transform: translateY(-2px);
       background: linear-gradient(90deg, #ff4d88, #ff66a3);
     }
-
-    .emoji {
-      font-size: 50px;
-      margin-bottom: 15px;
-    }
   </style>
 </head>
 <body>
 
-  <div class="success-container">
+<div class="success-container">
     <div class="emoji">🎉</div>
     <h2>Siparişiniz Başarıyla Alındı!</h2>
-    <p>Teşekkür ederiz 💖 Ürünleriniz özenle hazırlanıyor. En kısa sürede kargoya verilecektir.</p>
+    <p>
+        Siparişiniz alınmıştır. Ürünleriniz hazırlanıyor ve en kısa sürede kargoya verilecektir 💖
+    </p>
     <a href="index.php" class="btn-continue">🛍️ Alışverişe Devam Et</a>
-  </div>
+</div>
 
 <?php include 'footer.php'; ?>
 </body>

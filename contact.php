@@ -3,11 +3,18 @@ require_once 'db.php';
 include 'header.php';
 
 if (isset($_POST['submit'])) {
-    $name = trim($_POST['name']);
-    $email = trim($_POST['email']);
-    $message = trim($_POST['message']);
+    $name = trim($_POST['name'] ?? '');
+    $email = trim($_POST['email'] ?? '');
+    $message = trim($_POST['message'] ?? '');
 
-    echo "<script>alert('Teşekkürler $name! Mesajınız başarıyla gönderildi 💌');</script>";
+    if ($name && $email && $message) {
+        $stmt = $pdo->prepare("INSERT INTO contact_messages (name, email, message) VALUES (?, ?, ?)");
+        $stmt->execute([$name, $email, $message]);
+
+        echo "<script>alert('Teşekkürler $name! Mesajınız başarıyla gönderildi 💌');</script>";
+    } else {
+        echo "<script>alert('Lütfen tüm alanları doldurun.');</script>";
+    }
 }
 ?>
 
@@ -101,5 +108,6 @@ if (isset($_POST['submit'])) {
     transform: translateY(-2px);
 }
 </style>
+
 
 
